@@ -6,8 +6,9 @@ Requires the ESP32 conference badge or similar hardware:
 - ILI9341 320x240 TFT
 - [8] Tactile momentary buttons
 - [4] 4k7 resistors (button pullups)
-- speaker/active buzzer
 - [3] 5mm LEDs (one each of red, yellow, green)
+- [3] 100R resistors (LED current limiters)
+- small speaker/active buzzer  (8 Ohm / 2 Watt)
 - CR18650 battery and battery holder are optional
 
 Required Libraries:
