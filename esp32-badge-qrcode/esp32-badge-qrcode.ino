@@ -26,8 +26,8 @@ static int16_t    qr_x, qr_y, qr_pixels;
 
 const char* my_name  = "Paul Pagel";
 const char* company  = "First Solar";
-const char* ssid     = "CLARANET";
-const char* password = "Maxisaverygoodboy!";
+const char* ssid     = "";
+const char* password = "";
 
 String   url; 
 
