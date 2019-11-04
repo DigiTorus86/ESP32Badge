@@ -3,6 +3,9 @@
  * - Displays attendee name and company with
  *   chasing light border effect and pulsing LEDs
  *   
+ *   by Paul Pagel
+ *   http://twobittinker.com 
+ *   
  * Requires:
  * - ESP32 Conference Badge
  *
