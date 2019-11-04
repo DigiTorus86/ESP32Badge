@@ -15,3 +15,12 @@ Required Libraries:
 - Adafruit GFX
 - Adafruit ILI9341
 - XTronical XT_DAC  https://www.xtronical.com/the-dacaudio-library-download-and-installation/
+
+Example Sketches:
+- Gravitack:  Low-gravity lunar lander type game
+- Marquee:  Name badge with moving light border and fading LEDs
+- QR Code:  Name badge with QR code display of the ESP32 IP address and simple web page for controlling the LEDs
+- Test1:  Test app to verify functionality of the badge
+- Time & Weather:  Reads time and weather data from DS3231 RTC and BME280 via I2C
+- Tombstone:  Classic Morg-shooting schooner game
+- Wizard:  Animated badge for wizards and witches that have escaped from notorious magical prisons
