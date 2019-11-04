@@ -1,7 +1,7 @@
 # ESP32Badge
 Source code and resources for the ESP32 Conference Badge
 
-![alt text](https://raw.githubusercontent.com/DigiTorus86/ESP32Badge/main/images/BadgeRender_v1b.png)
+![alt text](https://raw.githubusercontent.com/DigiTorus86/ESP32Badge/master/images/BadgeRender_v1b.png)
 
 Requires the ESP32 conference badge or similar hardware:
 - ESP32 DEVKIT v1  (other ESP32 boards can be used with minimal PIN changes)
