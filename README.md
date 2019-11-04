@@ -1,6 +1,8 @@
 # ESP32Badge
 Source code and resources for the ESP32 Conference Badge
 
+![alt text](https://raw.githubusercontent.com/DigiTorus86/ESP32Badge/main/images/BadgeRender_v1b.png)
+
 Requires the ESP32 conference badge or similar hardware:
 - ESP32 DEVKIT v1  (other ESP32 boards can be used with minimal PIN changes)
 - ILI9341 320x240 TFT
@@ -10,6 +12,7 @@ Requires the ESP32 conference badge or similar hardware:
 - [3] 100R resistors (LED current limiters)
 - small speaker/active buzzer  (8 Ohm / 2 Watt)
 - CR18650 battery and battery holder are optional
+- Some sketches have additional hardware requirements (components attached to I2C or Serial pins)
 
 Required Libraries:
 - Adafruit GFX
