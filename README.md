@@ -17,6 +17,7 @@ Requires the ESP32 conference badge or similar hardware:
 Required Libraries:
 - Adafruit GFX
 - Adafruit ILI9341
+- ArduinoJson
 - XTronical XT_DAC  https://www.xtronical.com/the-dacaudio-library-download-and-installation/
 
 Example Sketches:
@@ -24,6 +25,6 @@ Example Sketches:
 - Marquee:  Name badge with moving light border and fading LEDs
 - QR Code:  Name badge with QR code display of the ESP32 IP address and simple web page for controlling the LEDs
 - Test1:  Test app to verify functionality of the badge
-- Time & Weather:  Reads time and weather data from DS3231 RTC and BME280 via I2C
+- Time & Weather:  Displays time and weather data from DS3231 RTC and BME280 via I2C as well as network weather info
 - Tombstone:  Classic Morg-shooting schooner game
 - Wizard:  Animated badge for wizards and witches that have escaped from notorious magical prisons
