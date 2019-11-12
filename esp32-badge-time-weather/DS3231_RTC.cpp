@@ -39,8 +39,8 @@ bool DS3231_RTC::setDS3231time(struct ds3231_time_t set_time)
   Wire.write(decToBcd(set_time.dayOfMonth)); // set date (1 to 31)
   Wire.write(decToBcd(set_time.month)); // set month
   Wire.write(decToBcd(set_time.year)); // set year (0 to 99)
-  Wire.endTransmission();
-  return true;
+  byte success = Wire.endTransmission();
+  return (success == 0);
 }
 
 /*
@@ -53,7 +53,12 @@ bool DS3231_RTC::readDS3231time(struct ds3231_time_t *read_time)
   Wire.endTransmission();
   
   // request seven bytes of data from DS3231 starting from register 00h
-  Wire.requestFrom(DS3231_I2C_ADDRESS, 7);
+  byte num_bytes = Wire.requestFrom(DS3231_I2C_ADDRESS, 7);
+
+  if (num_bytes == 0)
+  {
+    return false;  // device failure
+  }
   
   read_time->second = bcdToDec(Wire.read() & 0x7f);
   read_time->minute = bcdToDec(Wire.read());

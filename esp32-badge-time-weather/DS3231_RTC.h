@@ -3,6 +3,7 @@
 
 #include "Arduino.h"
 #include <Wire.h>
+#include "time.h"
 
 #define DS3231_I2C_ADDRESS 0x68
 
@@ -27,6 +28,7 @@ class DS3231_RTC
     uint8_t bcdToDec(uint8_t val);
     bool setDS3231time(ds3231_time_t set_time);
     bool readDS3231time(struct ds3231_time_t *read_time);
+    
     const char* getDayAbbr(uint8_t dayOfWeek);
     const char* getMonthAbbr(uint8_t month);
 
