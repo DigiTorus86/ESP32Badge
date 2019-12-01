@@ -33,3 +33,7 @@ Example Sketches:
 
 Accessories:
 - Kickstand:  Minimalist 3D-printed kickstand for the badge to get it to stand upright on a flat surface.  Attach to the middle holes on badge (just below the buttons) with 2 small flat-headed woodscrews.
+
+Additional Info:
+- The TFT display orientation is rotated 180 degrees between the v1.1 /DevKitv1 board and v1.2 DEVKITC versions.  Adjust the SCREEN_ROT value in esp32_badge.h to 1 for v1.1 or 3 for v1.2 boards.  
+- SD card slot on the TFT is not connected in v1.1
