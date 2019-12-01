@@ -30,3 +30,6 @@ Example Sketches:
 - Time & Weather:  Displays time and weather data from DS3231 RTC and BME280 via I2C as well as network weather info
 - Tombstone:  Classic Morg-shooting schooner game
 - Wizard:  Animated badge for wizards and witches that have escaped from notorious magical prisons
+
+Accessories:
+- Kickstand:  Minimalist 3D-printed kickstand for the badge to get it to stand upright on a flat surface.  Attach to the middle holes on badge (just below the buttons) with 2 small flat-headed woodscrews.
