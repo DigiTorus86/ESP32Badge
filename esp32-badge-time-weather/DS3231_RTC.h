@@ -1,3 +1,7 @@
+/*
+ * Class for managing the DS3231 Real Time Clock via I2C
+ */
+
 #ifndef _DS3231_RTC__
 #define _DS3231_RTC__
 

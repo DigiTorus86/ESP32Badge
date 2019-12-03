@@ -23,11 +23,12 @@ Requires:
 #include <Fonts/FreeSansBold18pt7b.h> 
 #include <WiFi.h>
 #include <HTTPClient.h>
+#include <ArduinoJson.h>  // ArduinoJson by Benoit Blanchon
 #include "time.h"
 #include "esp32_badge.h"
 #include "DS3231_RTC.h"
 #include "SparkFunBME280.h"
-#include <ArduinoJson.h>  // ArduinoJson by Benoit Blanchon
+#include "TFT_Helper.h"
 
 #define FORECAST_REFRESH_MS       3600000  // 1 hr
 #define BME280_I2C_ADDR           0X76     // default address for BME280 is 0x77, mine was set to 0x76
@@ -47,18 +48,22 @@ Requires:
 #define COLOR_FORECAST_TITLE_BGD  ILI9341_GREEN
 #define COLOR_FORECAST_BODY       ILI9341_DARKGREY
 
+#define SCREEN_ROWS_MONO12       9
+#define SCREEN_COLS_MONO12      22
+
 // Calculates the screen X position for the given time digit 
 // digit index values:  0 = h1, 1=h2, 2=m1, 3=m2, 4=s1, 5=s2
-#define TIME_DIGIT_X(digit)       (20 + digit * 38 + (digit > 1 ? 20 : 0) + (digit > 3 ? 20 : 0))
+#define TIME_DIGIT_X(digit)       (20 + (digit) * 38 + ((digit) > 1 ? 20 : 0) + ((digit) > 3 ? 20 : 0))
 
-const char*    ssid     = ""; // add your network ID here 
-const char*    password = ""; // add your network password here 
+const char*    ssid     = ""; // TODO: add your network ID here 
+const char*    password = ""; // TODO: add your network password here 
 const uint16_t net_connect_timeout_sec = 10;
-const char*    forecast_api_url = "https://api.weather.gov/gridpoints/CLE/19,62/forecast?units=us";  // x=19,y=62 for Perrysburg, OH
+const char*    forecast_api_url = "https://api.weather.gov/gridpoints/CLE/19,62/forecast?units=us";  // TODO: change this for your city
 
-const char* ntp_server = "pool.ntp.org";
-const long  gmt_offset_sec = -18000;      // EST GMT-5
-const int   daylight_offset_sec = -14400; // EDT GMT-4 
+const char*   ntp_server = "pool.ntp.org";
+// TODO: change this if you are not in the Eastern US time zone
+const long    gmt_offset_sec = -18000;      // EST GMT-5 * 3600 seconds per hour
+const int     daylight_offset_sec = -14400; // EDT GMT-4 * 3600 seconds per hour
 
 bool network_available, ds3231_available, bme280_available;  
 
@@ -78,9 +83,9 @@ struct ds3231_time_t curr_time;
 DS3231_RTC rtc = DS3231_RTC();
 BME280 sensor;
 
-// use https://arduinojson.org/v5/assistant/ to find appropriate JSON memory size
-StaticJsonDocument<15000> json_doc; 
-unsigned long forecast_age_ms;
+// Use https://arduinojson.org/v5/assistant/ to find appropriate JSON memory size
+StaticJsonDocument<15000> json_doc; // holds the forecast from the weather API
+unsigned long forecast_age_ms;    // # milliseconds elapsed since the forecast was retrieved
 bool forecast_loaded = false;
 
 uint8_t curr_time_digits[6];
@@ -89,6 +94,12 @@ uint8_t prev_day;
 
 int16_t curr_temp_f, curr_temp_c, curr_humid, curr_pressure, forecast_temp_f;
 int16_t prev_temp_f, prev_temp_c, prev_humid, prev_pressure, prev_forecast_temp_f;
+
+bool btnA_pressed, btnB_pressed, btnX_pressed, btnY_pressed;
+bool btnUp_pressed, btnDown_pressed, btnLeft_pressed, btnRight_pressed;
+bool spkr_on, led1_on, led2_on, led3_on;
+
+uint8_t spkr_channel = 1;
 
 Adafruit_ILI9341 tft = Adafruit_ILI9341(TFT_CS, TFT_DC, TFT_MOSI, TFT_CLK, TFT_RST, TFT_MISO);
 
@@ -159,7 +170,7 @@ void setup()
 }
 
 /*
- * Store the current time value in hhmmss digit array
+ * Store the current time value in hhmmss digit buffer array
  */
 void currTimeToDigits()
 {
@@ -196,7 +207,7 @@ void readBME280()
     float pressure = sensor.readFloatPressure() * 0.0002952998751f;  // kPa to inHg
     curr_pressure = (int16_t)(pressure); 
   }
-  cntr = (cntr + 1) % 100;
+  cntr = (cntr + 1) % 100;  // check every 100th time this is called
 }
 
 /*
@@ -433,7 +444,7 @@ void beginTimeAndSensor()
     tft.setTextColor(COLOR_FORECAST_BODY);
     tft.setTextSize(1);
     tft.setCursor(0, 200);
-    drawWordWrap(short_forecast, 2, 22);  
+    TFT_drawWordWrap(short_forecast, 2, SCREEN_COLS_MONO12, &tft);  
   } 
 }
 
@@ -466,7 +477,7 @@ void updateTimeAndSensor()
     x = TIME_DIGIT_X(i);
     if (prev_time_digits[i] != curr_time_digits[i])
     {
-      tft.fillRect(x, 44, 38, 50, ILI9341_ORANGE);
+      tft.fillRect(x, 44, 38, 50, COLOR_TIME_BGD);
       tft.setCursor(x, 92);
       tft.print(curr_time_digits[i]);
     }
@@ -639,11 +650,10 @@ void beginDayForecast()
 {
   tft.fillScreen(COLOR_SCREEN_BGD);
 
-  tft.fillRect(0, 0, 320, 24, COLOR_FORECAST_TITLE_BGD);
   tft.setFont(&FreeMonoBold12pt7b);
   tft.setTextColor(COLOR_FORECAST_TITLE, COLOR_FORECAST_TITLE_BGD);
   tft.setTextSize(1);
-  tft.setCursor(0, 40);
+  tft.setCursor(0, 50);
 
   if (!network_available) 
   {
@@ -657,7 +667,6 @@ void beginDayForecast()
     tft.print("Getting Forecast...");
     
     bool success = getForecast();
-    tft.fillRect(0, 0, 320, 60, COLOR_SCREEN_BGD);  // erase msg
   
     if (!success)
     {
@@ -668,120 +677,20 @@ void beginDayForecast()
     }
   }
   
+  // Display the forecast period title and body
   const char* period_name = json_doc["properties"]["periods"][0]["name"]; 
   const char* detailed_forecast = json_doc["properties"]["periods"][0]["detailedForecast"]; 
-
+  
+  tft.fillScreen(COLOR_SCREEN_BGD);
+  tft.fillRect(0, 0, 320, 24, COLOR_FORECAST_TITLE_BGD);
+  
   tft.setCursor(0, 20);
-  drawTextUpper(period_name);
+  TFT_drawTextUpper(period_name, &tft);  // i.e. TODAY, TONIGHT
 
   tft.setTextColor(COLOR_FORECAST_BODY);
   tft.setCursor(0, 50);
 
-  drawWordWrap(detailed_forecast, 8, 22);
-}
-
-
-void drawWordWrap(const char* text, uint8_t rows, uint8_t cols)
-{
-   uint8_t  row = 0;
-   uint8_t  col_start = 0;
-   uint16_t curr_break, next_break;
-  
-   uint16_t pos = 0;   
-   const char space = ' ';
-   char *pch;
-
-   if (text == NULL)
-   {
-    return;
-   }
-
-   if (strlen(text) < cols)
-   {
-    tft.print(text);
-    return;
-   }
-   
-   Serial.println("drawWordWrap");
-   Serial.println(text);
-
-   next_break = 0; 
-   pch = strchr(text, space);
-   if (pch != NULL)
-   {
-     curr_break = pch - text;
-   }
-   else
-   {
-    Serial.println("No space detected");
-    tft.print(text);
-    return;
-   }
-
-   Serial.print("First space: ");
-   Serial.println(curr_break);
-   Serial.print("Text length: ");
-   Serial.println(strlen(text));
-
-    while (pos < strlen(text) - 1 && row < rows)
-    {
-     Serial.print("Pos: ");
-     Serial.println(pos);
-    
-     if (next_break < strlen(text) - 1)
-     {
-       pch = strchr(pch + 1, space);
-       if (pch != NULL)
-       {
-         next_break = pch - text;
-       }
-       else
-       {
-        next_break = strlen(text) - 1;
-       }
-     }
-     
-    Serial.print("Curr break: ");
-    Serial.println(curr_break);
-    Serial.print("Next break: ");
-    Serial.println(next_break);
-    Serial.print("Col start: ");
-    Serial.println(col_start);
-     
-     if (next_break - col_start >= cols || curr_break >= strlen(text) - 1)
-     {
-      // too many characters until next break, use this one
-      while (pos <= curr_break && pos < strlen(text) - 1)
-      {
-        Serial.print(text[pos]);
-        tft.print(text[pos]);
-        pos += 1;
-      }
-      Serial.println();
-      tft.println();
-
-      while (text[pos] == ' ' && pos < strlen(text) - 1)
-      {
-         pos += 1;  // skip the next space(s)
-      }
-      
-      col_start = pos + 1;
-      row += 1;
-     }
-
-     curr_break = next_break;
-   }
-}
-
-/*
- * Draws the text in uppercase to the display
- */
-void drawTextUpper(const char* text)
-{
-  for (uint16_t i = 0; i < strlen(text); i++)
-  {
-    tft.print((char)toupper(text[i]));
-  }
+  TFT_drawWordWrap(detailed_forecast, 8, SCREEN_COLS_MONO12, &tft);
 }
 
 /*
@@ -808,11 +717,11 @@ void beginTomorrowForecast()
   const char* detailed_forecast = json_doc["properties"]["periods"][1]["detailedForecast"]; 
 
   tft.setCursor(0, 20);
-  drawTextUpper(period_name);
+  TFT_drawTextUpper(period_name, &tft);
 
   tft.setTextColor(COLOR_FORECAST_BODY);
   tft.setCursor(0, 50);
-  drawWordWrap(detailed_forecast, 8, 22);
+  TFT_drawWordWrap(detailed_forecast, 9, SCREEN_COLS_MONO12, &tft);
 }
 
 /*
@@ -842,7 +751,6 @@ void beginSetTime()
   tft.println("Press A to confirm");
   tft.println("X or Y to cancel");
   
-
   tft.fillRect(0, 30, 320, 80, COLOR_TIME_BGD);       // time box
 
   tft.setFont(&FreeSansBold18pt7b);
@@ -923,8 +831,7 @@ void updateSetTime()
     rtc.setDS3231time(curr_time);
 
     display_mode = MODE_TIME_AND_SENSOR;
-  }
-  
+  } 
 }
 
 /*
@@ -952,7 +859,11 @@ void updateScreen()
       case MODE_SET_TIME: 
         beginSetTime();
         break;
-        
+
+      default:
+        display_mode = MODE_TIME_AND_SENSOR;
+        beginTimeAndSensor();
+        break;    
     }
   }
 
@@ -976,6 +887,11 @@ void updateScreen()
     case MODE_SET_TIME: 
       updateSetTime();
       break;
+
+    default:
+      display_mode = MODE_TIME_AND_SENSOR;
+      updateTimeAndSensor();
+      break;    
   }
 }
 
@@ -1098,6 +1014,7 @@ void loop(void)
   }
   else if (btnB_pressed)
   {
+    //dumpScreen(0, 0, 320, 240, tft); // TESTING!!
     btnB_pressed = false;
   }
   else

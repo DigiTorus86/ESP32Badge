@@ -9,16 +9,25 @@ Requires:
  - (4) 4k7 pullup resistors
  - (3) 220R LED resistors
  ****************************************************/
- 
+
+#include <WiFi.h>
 #include "esp32_badge.h"
 #include "codemash_logo.h"
-#include <WiFi.h>
+
+bool btnA_pressed, btnB_pressed, btnX_pressed, btnY_pressed;
+bool btnUp_pressed, btnDown_pressed, btnLeft_pressed, btnRight_pressed;
+bool spkr_on, led1_on, led2_on, led3_on;
+
+uint8_t spkr_channel = 1;
 
 Adafruit_ILI9341 tft = Adafruit_ILI9341(TFT_CS, TFT_DC, TFT_MOSI, TFT_CLK, TFT_RST, TFT_MISO);
 
+/*
+ * Initialization and peripheral setup.  Called once at program start. 
+ */
 void setup() 
 {
-  Serial.begin(9600);
+  Serial.begin(115200);
   Serial.println("ESP32 Badge Test1"); 
   delay(100);
 
@@ -87,7 +96,9 @@ void setup()
   tft.drawRGBBitmap(250, 50, (uint16_t *)codemash_logo, 57, 67);
 }
 
-
+/*
+ * Use to toggle between normal and inverted text display
+ */
 void setTextColor(uint16_t color, bool inverted)
 {
   if (inverted)
@@ -97,13 +108,9 @@ void setTextColor(uint16_t color, bool inverted)
   
 }
 
-
-void playAudio()
-{
-  
-}
-
-
+/*
+ * Draws the little battery level icon
+ */
 void drawBatteryLevel(int battLevel, int x, int y)
 {
   uint16_t fill_color = ILI9341_GREEN;
@@ -143,6 +150,9 @@ void drawBatteryLevel(int battLevel, int x, int y)
   digitalWrite(LED_2, LOW);
 }
 
+/*
+ * Checks the battery level and displays it to the screen
+ */
 void checkBattery()
 {
   // 1020 on USB
@@ -170,6 +180,9 @@ void checkBattery()
   cntr = (cntr + 1) % 10;
 }
 
+/*
+ * Updates the screen based on which buttons are being pressed
+ */
 void updateScreen()
 {
   // Direction buttons
@@ -231,7 +244,9 @@ void updateScreen()
   
 }
 
-
+/*
+ * Main program loop.  Called continuously after setup.
+ */
 void loop(void) 
 {
   if(digitalRead(BTN_UP) == LOW)
@@ -333,7 +348,6 @@ void loop(void)
     spkr_on = false;
   }
   
-
   updateScreen();
   checkBattery();
   delay(100);
