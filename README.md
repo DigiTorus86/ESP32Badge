@@ -14,7 +14,7 @@ Requires the ESP32 conference badge or similar hardware:
 - CR18650 battery and battery holder are optional
 - Some sketches have additional hardware requirements (components attached to I2C or Serial pins, or SD card)
 
-Required Libraries:
+Required Libraries for Arduino platform sketches:
 - Adafruit GFX
 - Adafruit ILI9341
 - ArduinoJson
@@ -26,7 +26,7 @@ Example Sketches:
 - Marquee:  Name badge with moving light border and fading LEDs
 - QR Code:  Name badge with QR code display of the ESP32 IP address and simple web page for controlling the LEDs
 - Slideshow: Timed slideshow display.  Requires v1.2 of the badge with 38-pin DevKitC and an SD card.
-- Test1:  Test app to verify functionality of the badge
+- Test1:  Test app to verify functionality of the badge.  Also available for the ESP-IDF platform. 
 - Time & Weather:  Displays time and weather data from DS3231 RTC and BME280 via I2C as well as network weather info
 - Tombstone:  Classic Morg-shooting schooner game
 - Wizard:  Animated badge for wizards and witches that have escaped from notorious magical prisons
