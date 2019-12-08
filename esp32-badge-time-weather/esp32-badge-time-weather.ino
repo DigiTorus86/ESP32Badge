@@ -29,6 +29,7 @@ Requires:
 #include "DS3231_RTC.h"
 #include "SparkFunBME280.h"
 #include "TFT_Helper.h"
+#include "icons.h"
 
 #define FORECAST_REFRESH_MS       3600000  // 1 hr
 #define BME280_I2C_ADDR           0X76     // default address for BME280 is 0x77, mine was set to 0x76
@@ -55,6 +56,9 @@ Requires:
 // digit index values:  0 = h1, 1=h2, 2=m1, 3=m2, 4=s1, 5=s2
 #define TIME_DIGIT_X(digit)       (20 + (digit) * 38 + ((digit) > 1 ? 20 : 0) + ((digit) > 3 ? 20 : 0))
 
+bool getNtpTime();
+bool getForecast();
+
 const char*    ssid     = ""; // TODO: add your network ID here 
 const char*    password = ""; // TODO: add your network password here 
 const uint16_t net_connect_timeout_sec = 10;
@@ -65,7 +69,7 @@ const char*   ntp_server = "pool.ntp.org";
 const long    gmt_offset_sec = -18000;      // EST GMT-5 * 3600 seconds per hour
 const int     daylight_offset_sec = -14400; // EDT GMT-4 * 3600 seconds per hour
 
-bool network_available, ds3231_available, bme280_available;  
+bool wifi_available, ds3231_available, bme280_available;  
 
 bool btnUp_released, btnDown_released, btnLeft_released, btnRight_released;
 
@@ -154,17 +158,26 @@ void setup()
   }
 
   // Try to get the current local time from NTP server
-  network_available = getNtpTime();
-  if (network_available)
+  if (strlen(ssid) > 0)
   {
-    getForecast();
+    wifi_available = getNtpTime();
+    if (wifi_available)
+    {
+      getForecast();
+    }
+    else
+    {
+      Serial.println("Unable to get Network Time. Check network SSID and password.");
+      digitalWrite(LED_1, HIGH);  // redlight!
+    }
   }
   else
   {
-    Serial.println("Unable to get Network Time. Check network SSID and password.");
-    digitalWrite(LED_1, HIGH);  // redlight!
+    Serial.println("No network SSID specified.");
+    wifi_available = false;
   }
-
+ 
+  
   display_mode = MODE_TIME_AND_SENSOR;
   beginTimeAndSensor();
 }
@@ -237,11 +250,11 @@ bool connectToWiFi(uint16_t timeout_sec)
   {
     digitalWrite(LED_1, HIGH); // red=problem 
     Serial.println("Network connection timeout.");
-    network_available = false;
+    wifi_available = false;
     return false;  // failure 
   }
 
-  network_available = true;
+  wifi_available = true;
   return true; // success
 }
 
@@ -317,12 +330,26 @@ bool readControllerTime(struct ds3231_time_t *read_time)
   
   if(getLocalTime(&timeinfo))
   {
+    Serial.print(timeinfo.tm_year);
+    Serial.print("-");
+    Serial.print(timeinfo.tm_mon);
+    Serial.print("-");
+    Serial.print(timeinfo.tm_mday);
+    Serial.print("[");
+    Serial.print(timeinfo.tm_wday);
+    Serial.print("]");
+    Serial.print(timeinfo.tm_hour);
+    Serial.print(":");
+    Serial.print(timeinfo.tm_min);
+    Serial.print(":");
+    Serial.println(timeinfo.tm_sec);
+  
     read_time->second = timeinfo.tm_sec;
     read_time->minute = timeinfo.tm_min;
     read_time->hour = timeinfo.tm_hour;
     read_time->dayOfWeek = timeinfo.tm_wday + 1;
     read_time->dayOfMonth = timeinfo.tm_mday;
-    read_time->month = timeinfo.tm_mon;
+    read_time->month = timeinfo.tm_mon + 1;
     read_time->year = timeinfo.tm_year % 100;
     return true;
   }
@@ -338,7 +365,7 @@ void setControllerTime(ds3231_time_t set_time)
     time_t time_now;
 
     t.tm_year = set_time.year + 100;  // Year - 1900
-    t.tm_mon = set_time.month;        // Month, where 0 = jan
+    t.tm_mon = set_time.month - 1;    // Month, where 0 = jan
     t.tm_mday = set_time.dayOfMonth;  // Day of the month
     t.tm_hour = set_time.hour;
     t.tm_min = set_time.minute;
@@ -405,6 +432,23 @@ void beginTimeAndSensor()
 {
   tft.fillScreen(COLOR_SCREEN_BGD);
   tft.fillRect(0, 30, 320, 74, COLOR_TIME_BGD);  // time box
+
+  if (wifi_available)
+  {
+    tft.drawRGBBitmap(302, 0, (uint16_t *)wifi_ico, 16, 11);
+  }
+
+  if (bme280_available)
+  {
+    tft.drawRGBBitmap(0, 0, (uint16_t *)thermometer_ico, 5, 13);
+  }
+
+  if (ds3231_available)
+  {
+    tft.drawRGBBitmap(12, 0, (uint16_t *)clock_ico, 12, 12);
+  }
+
+  
 
   // Initial time display
   tft.setFont(&FreeSansBold18pt7b);
@@ -489,7 +533,7 @@ void updateTimeAndSensor()
   // Date
   if (prev_day != curr_time.dayOfMonth)
   {
-    tft.fillRect(0, 0, 320, 29, COLOR_SCREEN_BGD); // clear date
+    tft.fillRect(50, 0, 250, 29, COLOR_SCREEN_BGD); // clear date
     tft.setTextSize(1);
     tft.setTextColor(COLOR_DATE);
     tft.setCursor(50, 18);
@@ -655,9 +699,9 @@ void beginDayForecast()
   tft.setTextSize(1);
   tft.setCursor(0, 50);
 
-  if (!network_available) 
+  if (!wifi_available) 
   {
-    tft.print("Network not available");
+    tft.print("WiFi not available");
     return;
   }
 
