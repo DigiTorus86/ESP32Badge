@@ -586,24 +586,31 @@ void updateTimeAndSensor()
     {
       if (bme280_available)
       {
+        // Already howing sensor temp on left, now show forecast on right
         x = 180 + (forecast_temp_f < 100 ? 30 : 0) + (forecast_temp_f < 10 ? 30 : 0) - (forecast_temp_f < 0 ? 30 : 0) - (forecast_temp_f <= -10 ? 30 : 0);
-        tft.setTextColor(COLOR_SENSOR_TEMP);
+        tft.setTextColor(COLOR_FORECAST_TEMP);
         tft.setTextSize(2);
         tft.setCursor(x, 162);
         tft.print(forecast_temp_f);
       
-        tft.drawCircle(284, 138, 4, COLOR_SENSOR_TEMP);
+        tft.drawCircle(284, 138, 4, COLOR_FORECAST_TEMP);
       
         tft.setTextSize(1);
         tft.setCursor(296, 162);
         tft.print("F");
-        
+
+        // Indicate that the left value is from sensor, right is from forecast
         tft.setTextColor(COLOR_SENSOR_TEMP);
         tft.setCursor(124, 126);
         tft.print("in");
+
+        tft.setTextColor(COLOR_FORECAST_TEMP);
+        tft.setCursor(164, 126);
+        tft.print("out");
       }
       else 
       {
+        // No temp sensor available, so show forecast temp in C on right
         x = 180 + (curr_temp_c < 100 ? 30 : 0) + (curr_temp_c < 10 ? 30 : 0) - (curr_temp_c < 0 ? 30 : 0) - (curr_temp_c <= -10 ? 30 : 0);
         tft.setTextColor(COLOR_FORECAST_TEMP);
         tft.setTextSize(2);
@@ -623,6 +630,7 @@ void updateTimeAndSensor()
     }
     else if (!forecast_loaded)
     {
+      // Display the BME sensor temperature in celsius
       x = 180 + (curr_temp_c < 100 ? 30 : 0) + (curr_temp_c < 10 ? 30 : 0) - (curr_temp_c < 0 ? 30 : 0) - (curr_temp_c <= -10 ? 30 : 0);
       tft.setTextSize(2);
       tft.setCursor(x, 162);
