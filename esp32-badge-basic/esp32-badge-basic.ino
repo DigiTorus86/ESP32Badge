@@ -4,6 +4,7 @@
  * 1. Marquee
  * 2. Hello, My Name Is....
  * 3. Hello, I'm... with periodically rotating messages
+ * 4. Gangster (or whatever static picture you choose)
  *   
  *   by Paul Pagel
  *   http://twobittinker.com 
@@ -21,6 +22,7 @@
 #include "Marquee.h"
 #include "Hello.h"
 #include "HelloRotate.h"
+#include "gangster.h"
 #include <Fonts/FreeSansBold24pt7b.h>  
 #include <Fonts/FreeSansBold9pt7b.h>  
 #include <Fonts/FreeSansOblique18pt7b.h>
@@ -28,12 +30,13 @@
 const char* my_name  = "Paul Pagel";
 const char* company  = "First Solar";
 
-#define DISPLAY_MODE_CNT  3
+#define DISPLAY_MODE_CNT  4
 enum display_mode_type 
 {
   MODE_MARQUEE,
   MODE_HELLO,
-  MODE_HELLO_ROTATE
+  MODE_HELLO_ROTATE,
+  MODE_GANGSTER
 };
 enum display_mode_type display_mode, prev_display_mode;
 
@@ -98,6 +101,11 @@ void updateScreen()
         // see HelloRotate.h message array to change the displayed text
         hello_rot.begin(&tft, &FreeSansBold24pt7b);
         break;  
+
+      case MODE_GANGSTER:
+        // put whatever 320x240 image you want displayed in gangster.h
+        tft.drawRGBBitmap(0, 0, (uint16_t *)gangster, 320, 240);
+        break;
     }
   }
 
@@ -116,6 +124,10 @@ void updateScreen()
 
       case MODE_HELLO_ROTATE: 
         hello_rot.update(&tft, &FreeSansOblique18pt7b);
+        break;  
+
+      case MODE_GANGSTER: 
+        // static image displayed - nothing to do
         break;  
   }
 }

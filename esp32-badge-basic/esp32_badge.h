@@ -44,7 +44,7 @@
 #define BATT_WARN 630
 #define BATT_DIRE 610
 
-#define SCREEN_ROT 1 // 1 = horizontal, w/SD pins on the left, 3 = horizontal, w/SD pins on the right
+#define SCREEN_ROT 3 // 1 = horizontal, w/SD pins on the left, 3 = horizontal, w/SD pins on the right
 #define SCREEN_WD  320
 #define SCREEN_HT  240
 

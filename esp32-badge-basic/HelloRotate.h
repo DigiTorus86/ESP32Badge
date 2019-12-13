@@ -32,11 +32,11 @@ class HelloRotate
   	{ 
       { "An Amazing", "Software", "Developer" },
       { "Just Happy", "To Be Here", "" },  
-  	  { "", "Batman", "" }, 
+  	  { "", "BATMAN", "" }, 
   	  { "", "Awesome", "" },
   	  { "", "Feeling Spicy", "" },
-  	  { "", "Yo Mama", "" },
-  	  { "Silently", "Judging", "You" }
+  	  { "from the", "FUTURE!", "" },
+  	  { "Silently", "Judging You", "" }
   	};
     
 };
