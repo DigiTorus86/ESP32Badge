@@ -221,11 +221,7 @@ void updateScreen()
   setTextColor(ILI9341_CYAN, btnA_pressed);
   tft.print("A");
 
-  tft.setCursor(x+30, 90);
-  setTextColor(ILI9341_CYAN, btnA_pressed);
-  tft.print("A");
-
-
+  // Speaker and LEDs
   tft.setCursor(0, 140);
   setTextColor(ILI9341_LIGHTGREY, spkr_on);
   tft.print("(( SPKR ))");
@@ -241,7 +237,6 @@ void updateScreen()
   tft.setCursor(260, 140);
   setTextColor(ILI9341_GREEN, led3_on);
   tft.print("LED3");
-  
 }
 
 /*
