@@ -22,12 +22,14 @@ Required Libraries for Arduino platform sketches:
 - XTronical XT_DAC  https://www.xtronical.com/the-dacaudio-library-download-and-installation/
 
 Example Sketches:
-- Basic:  3 Simple badges combined into one (Marquee, Hello, Hello w/changing message)
+- Basic:  4 Simple badges combined into one (Marquee, Hello, Hello w/changing message, Gangster wanted poster)
+- Framework Only:  Starter sketch with only pin defines, component setup, and button checking.
 - Gravitack:  Low-gravity lunar lander type game
 - Marquee:  Name badge with moving light border and fading LEDs
 - QR Code:  Name badge with QR code display of the ESP32 IP address and simple web page for controlling the LEDs
 - Slideshow: Timed slideshow display.  Requires v1.2 of the badge with 38-pin DevKitC and an SD card.
 - Test1:  Test app to verify functionality of the badge.  Also available for the ESP-IDF platform. 
+- Test BLE Peripheral/Central:  Shows how to use one badge to control another over BLE.
 - Time & Weather:  Displays time and weather data from DS3231 RTC and BME280 temperature/humidity/pressure sensor via I2C as well as network weather info
 - Tombstone:  Classic Morg-shooting schooner game
 - Wizard:  Animated badge for wizards and witches that have escaped from notorious magical prisons
