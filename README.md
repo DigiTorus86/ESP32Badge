@@ -14,6 +14,8 @@ Requires the ESP32 conference badge or similar hardware:
 - small speaker/active buzzer  (8 Ohm / 2 Watt)
 - CR18650 battery and battery holder are optional
 - Some sketches have additional hardware requirements (components attached to I2C or Serial pins, or SD card)
+- PCB is available at PCB Way for order:
+  https://www.pcbway.com/project/shareproject/ESP32_Conference_Badge_v1_2.html
 
 Required Libraries for Arduino platform sketches:
 - Adafruit GFX
@@ -25,7 +27,6 @@ Example Sketches:
 - Basic:  4 Simple badges combined into one (Marquee, Hello, Hello w/changing message, Gangster wanted poster)
 - Framework Only:  Starter sketch with only pin defines, component setup, and button checking.
 - Gravitack:  Low-gravity lunar lander type game
-- Marquee:  Name badge with moving light border and fading LEDs
 - QR Code:  Name badge with QR code display of the ESP32 IP address and simple web page for controlling the LEDs
 - Slideshow: Timed slideshow display.  Requires v1.2 of the badge with 38-pin DevKitC and an SD card.
 - Test1:  Test app to verify functionality of the badge.  Also available for the ESP-IDF platform. 
