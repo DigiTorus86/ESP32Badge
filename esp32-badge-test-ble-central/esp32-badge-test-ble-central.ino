@@ -1,10 +1,13 @@
 /***************************************************
  * ESP32 Badge Test - Bluetooth Low Energy Central/Client
- * by Paul Pagel
  * 
  * Requires:
  * - ESP32 Badge 
  * - Another ESP32 running the esp32-badge-test-ble-peripheral sketch.
+ * 
+ *  Copyright (c) 2019 Paul Pagel
+ *  This is free software; see the license.txt file for more information.
+ *  There is no warranty; not even for merchantability or fitness for a particular purpose.
  ****************************************************/
 #include <BLEDevice.h> 
 #include "esp32_badge.h"
@@ -12,14 +15,12 @@
 
 // Specific MAC address of the peripheral/server you're looking for.
 // Should be in ff:ff:ff:ff:ff:ff format (6 bytes plus colon separators)
-String esp32_peripheral_address = "<ENTER>"; 
+String esp32_peripheral_address = ""; 
 
 #define PAIR_LED_PIN LED_3 
 #define DATA_LED_PIN LED_2 
 
 #define XMIT_ADDRESS 111
-// UUIDs for the BLE service and characteristic - must match the peripheral
-// Generate new GUIDs if you modify the data packet size/format
 #define SERVICE_UUID        "7b2948a7-1072-4f71-9f99-662c22f6087e"
 #define CHARACTERISTIC_UUID "fd93ec01-e537-443a-a57a-68c01bca3823"
 

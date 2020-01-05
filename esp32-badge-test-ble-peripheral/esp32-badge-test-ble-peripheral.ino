@@ -1,11 +1,14 @@
 /***************************************************
  * ESP32 Badge Test - Bluetooth Low Energy Peripheral/Server
- * by Paul Pagel
  * 
  * Requires:
  * - ESP32 Badge 
  * - Another ESP32 running the esp32-badge-test-ble-central sketch,
  *   configured with this device's MAC address.
+ *    
+ *  Copyright (c) 2019 Paul Pagel
+ *  This is free software; see the license.txt file for more information.
+ *  There is no warranty; not even for merchantability or fitness for a particular purpose.
  ****************************************************/
 
 #include <BLEDevice.h>

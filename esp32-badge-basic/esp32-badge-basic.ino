@@ -6,15 +6,15 @@
  * 3. Hello, I'm... with periodically rotating messages
  * 4. Gangster (or whatever static picture you choose)
  *   
- *   by Paul Pagel
- *   http://twobittinker.com 
- *   
  * Requires:
  * - ESP32 Conference Badge
  * 
  * Controls:
  * - X/Y: Change the display mode
  *
+ * * Copyright (c) 2019 Paul Pagel
+ * This is free software; see the license.txt file for more information.
+ * There is no warranty; not even for merchantability or fitness for a particular purpose.
  ****************************************************/
 
 #include "esp32_badge.h"

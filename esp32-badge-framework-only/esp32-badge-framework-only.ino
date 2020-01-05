@@ -3,7 +3,11 @@ ESP32 Badge starter framework
 
 Requires:
  - ESP32 Badge
- ****************************************************/
+
+Copyright (c) 2019 Paul Pagel
+This is free software; see the license.txt file for more information.
+There is no warranty; not even for merchantability or fitness for a particular purpose.
+****************************************************/
 
 #include "esp32_badge.h"
 
@@ -26,9 +30,6 @@ void setup()
   Serial.println("ESP32 Badge"); 
   delay(100);
 
-  ledcSetup(spkr_channel, 12000, 8);  // 12 kHz max, 8 bit resolution
-  ledcAttachPin(SPKR, spkr_channel);
-
   // Set up user input pins
   // Pins 24, 35, 36, & 39 on ESP32 do NOT have internal pullups, so need 4k7 physical resistors for these
   pinMode(BTN_UP, INPUT_PULLUP);
@@ -46,6 +47,9 @@ void setup()
   pinMode(LED_2, OUTPUT);
   pinMode(LED_3, OUTPUT);
 
+  ledcSetup(spkr_channel, 12000, 8);  // 12 kHz max, 8 bit resolution
+  ledcAttachPin(SPKR, spkr_channel);
+
   delay(100);
   
   // Set up the TFT screen
@@ -58,27 +62,13 @@ void setup()
 
   tft.setCursor(110, 60);
   tft.println("ESP32 Badge");
-
-  delay(200);
-}
-
-
-/*
- * Updates the screen based on which buttons are being pressed
- */
-void updateScreen()
-{
- 
-  
 }
 
 /*
- * Main program loop
+ * Main program loop, called continuously after setup
  */
 void loop(void)
 {
-  unsigned long start_time = millis();
-
   btnA_released = false; 
   btnB_released = false;
   btnX_released = false;
@@ -192,7 +182,6 @@ void loop(void)
   if(digitalRead(BTN_B) == LOW)
   {
     btnB_pressed = true;
-    
   }
   else if (btnB_pressed)
   {

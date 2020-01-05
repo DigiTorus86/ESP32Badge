@@ -1,8 +1,13 @@
 /***************************************************
 ESP32 Badge - Have You Seen This Wizard?  
+
 Requires:
  - ESP32 Badge kit
- ****************************************************/
+
+Copyright (c) 2019 Paul Pagel
+This is free software; see the license.txt file for more information.
+There is no warranty; not even for merchantability or fitness for a particular purpose.
+*****************************************************/
 
 #include "esp32_badge.h"
 #include "WiFi.h"
@@ -13,32 +18,24 @@ Requires:
 #define PIC_X   113
 #define PIC_Y   110
 #define PIC_CNT   6
+#define FRAME_DELAY_MS  100
 
-static int  pic_idx = 0;
-static int  pic_chg = 1; 
+int  pic_idx = 0;
+int  pic_chg = 1; 
+
+uint8_t spkr_channel = 1;
 
 
 Adafruit_ILI9341 tft = Adafruit_ILI9341(TFT_CS, TFT_DC, TFT_MOSI, TFT_CLK, TFT_RST, TFT_MISO);
 
+/*
+ * Initialization and peripheral setup.  Called once at program start. 
+ */
 void setup() 
 {
-  Serial.begin(9600);
-  Serial.println("ESP32 Badge Test1"); 
+  Serial.begin(115200);
+  Serial.println("ESP32 Badge Wizard"); 
   delay(100);
-
-  ledcSetup(spkr_channel, 12000, 8);  // 12 kHz max, 8 bit resolution
-  ledcAttachPin(SPKR, spkr_channel);
-
-  // Set up user input pins
-  // Pins 24, 35, 36, & 39 on ESP32 do NOT have internal pullups, so need 4k7 physical resistors for these
-  pinMode(BTN_UP, INPUT_PULLUP);
-  pinMode(BTN_DOWN, INPUT_PULLUP);   
-  pinMode(BTN_LEFT, INPUT_PULLUP);
-  pinMode(BTN_RIGHT, INPUT_PULLUP);
-  pinMode(BTN_A, INPUT_PULLUP);
-  pinMode(BTN_B, INPUT_PULLUP);
-  pinMode(BTN_X, INPUT_PULLUP);
-  pinMode(BTN_Y, INPUT_PULLUP);
 
   // Set up the speaker and LED output pins
   pinMode(SPKR, OUTPUT);
@@ -63,33 +60,9 @@ void setup()
   tft.fillRect(109, 104, 109, 129, ILI9341_BLACK); // border
 }
 
-
-void checkBattery()
-{
-  // 1020 on USB
-  // 960 on full batt
-  // 935 = 3.9v
-
-  static uint8_t cntr = 0;
-
-  if (cntr == 0)
-  {
-    int val = analogRead(BATT_LVL);
-  
-    tft.fillRect(180, 210, 50, 20, ILI9341_BLUE);
-  
-    tft.setTextSize(2);
-    tft.setCursor(0, 210);
-    tft.setTextColor(ILI9341_ORANGE);
-    tft.print("Battery:");
-    tft.setCursor(180, 210);
-    tft.print(val);
-  }
-
-  cntr = (cntr + 1) % 10;
-}
-
-
+/*
+ * Main program loop.  Called continuously after setup.
+ */
 void loop(void) 
 {
 
@@ -122,91 +95,6 @@ void loop(void)
     pic_idx = PIC_CNT - 2;
     pic_chg = -1;
   }
-  
 
-  
-  if(digitalRead(BTN_UP) == LOW)
-  {
-    Serial.println("Button Up pressed");
-    btnUp_pressed = true;
-  }
-  else
-  {
-    btnUp_pressed = false;
-  }
-
-  if(digitalRead(BTN_DOWN) == LOW)
-  {
-    Serial.println("Button Down pressed");
-    btnDown_pressed = true;
-  }
-  else
-  {
-    btnDown_pressed = false;
-  }
-
-  if(digitalRead(BTN_LEFT) == LOW)
-  {
-    Serial.println("Button Left pressed");
-    btnLeft_pressed = true;
-  }
-  else
-  {
-    btnLeft_pressed = false;
-  }
-
-  if(digitalRead(BTN_RIGHT) == LOW)
-  {
-    Serial.println("Button Right pressed");
-    btnRight_pressed = true;
-  }
-  else
-  {
-    btnRight_pressed = false;
-  }
-  
-  
-  if(digitalRead(BTN_X) == LOW)
-  {
-    Serial.println("Button X pressed");
-    btnX_pressed = true;
-  }
-  else
-  {
-    btnX_pressed = false;
-  }
-
-  if(digitalRead(BTN_Y) == LOW)
-  {
-    Serial.println("Button Y pressed");
-    btnY_pressed = true;
-  }
-  else
-  {
-    btnY_pressed = false;
-  }
-
-  if(digitalRead(BTN_A) == LOW)
-  {
-    Serial.println("Button A pressed");
-    btnA_pressed = true;
-  }
-  else
-  {
-    btnA_pressed = false;
-  }
-  
-  if(digitalRead(BTN_B) == LOW)
-  {
-    Serial.println("Button B pressed");
-    btnB_pressed = true; 
-  }
-  else
-  {
-    btnB_pressed = false;
-  }
-  
-
-  //checkBattery();
-  delay(100);
+  delay(FRAME_DELAY_MS);
 }

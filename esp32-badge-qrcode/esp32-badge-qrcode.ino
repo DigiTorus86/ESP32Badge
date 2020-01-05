@@ -1,9 +1,12 @@
-/**
- *  ESP32 QRCode to ILI9431 LCD screen
+/*
+ *  ESP32 Badge QRCode 
  *  
  *  Button B = Show big QR code for scanning
  *  Button A = Show normal badge mode
  *
+ * Copyright (c) 2019 Paul Pagel
+ * This is free software; see the license.txt file for more information.
+ * There is no warranty; not even for merchantability or fitness for a particular purpose.
  */
 
 #include "esp32_badge.h"
@@ -21,13 +24,25 @@
 #define HIDE_LOGO 50
 #define SHOW_LOGO 100
 
-static uint8_t    qr_scale;
-static int16_t    qr_x, qr_y, qr_pixels;
-
-const char* my_name  = "Paul Pagel";
-const char* company  = "First Solar";
+// TODO:  Change values as appropriate
+const char* my_name  = "";  
+const char* company  = "";
 const char* ssid     = "";
 const char* password = "";
+
+bool btnA_pressed, btnB_pressed, btnX_pressed, btnY_pressed;
+bool btnA_released, btnB_released, btnX_released, btnY_released;
+bool btnUp_pressed, btnDown_pressed, btnLeft_pressed, btnRight_pressed;
+bool btnUp_released, btnDown_released, btnLeft_released, btnRight_released;
+bool spkr_on, led1_on, led2_on, led3_on;
+
+uint8_t curr_font, font_offset = 0;
+String font_name;
+
+uint8_t spkr_channel = 1;
+
+uint8_t    qr_scale;
+int16_t    qr_x, qr_y, qr_pixels;
 
 String   url; 
 
@@ -69,15 +84,18 @@ void setup()
   // initialize WiFi
   WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED) {
+        digitalWrite(LED_2, HIGH); // flash yellow while connecting
         delay(500);
         Serial.print(".");
+        digitalWrite(LED_2, LOW);
   }
+  digitalWrite(LED_1, HIGH); // flash green when connected
   Serial.println("");
   Serial.println("WiFi connected.");
   Serial.println("IP address: ");
   Serial.println(WiFi.localIP());
-
   server.begin();
+  digitalWrite(LED_1, LOW);
     
 	// assemble URL for QR code
   url = String("http://" + WiFi.localIP().toString() + "/");
@@ -111,7 +129,7 @@ void drawBadge()
   tft.setTextColor(ILI9341_RED);
   tft.print(company);
 
-  tft.drawRGBBitmap(0, 130, (uint16_t *)headshot, 111, 111);
+  tft.drawRGBBitmap(0, 130, (uint16_t *)headshot, 120, 120);
 
   tft.drawRGBBitmap(133, 144, (uint16_t *)codemash_logo, 57, 67);
 }
@@ -162,6 +180,7 @@ void loop()
   // pressing B draws a full-screen QR code
   if(digitalRead(BTN_B) == LOW)
   {
+    //dumpScreen(0, 0, 320, 240, tft); // TESTING!!
     Serial.println("Button B pressed");
     tft.fillScreen(ILI9341_BLACK);
     drawQrCode(0, 0, 7, url.c_str(), false);

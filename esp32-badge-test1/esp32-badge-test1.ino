@@ -1,14 +1,19 @@
 /***************************************************
 ESP32 Badge test app
+
 Requires:
- - ESP32 Devkit v1 
+ - ESP32 Devkit
  - ILI9431 SPI TFT  
  - Passive buzzer/speaker
  - 1k trim pot
  - (8) momentary buttons
  - (4) 4k7 pullup resistors
- - (3) 220R LED resistors
- ****************************************************/
+ - (3) 100R LED resistors
+
+Copyright (c) 2019 Paul Pagel
+This is free software; see the license.txt file for more information.
+There is no warranty; not even for merchantability or fitness for a particular purpose.
+*****************************************************/
 
 #include <WiFi.h>
 #include "esp32_badge.h"

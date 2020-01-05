@@ -3,7 +3,11 @@
 * An emulation of the classic TI-994/A game by John Plaster for Texas Instruments 
 * *
 * Requires:
-* - ESP32 Devkit v1 badge
+* - ESP32 Badge
+
+Copyright (c) 2019 Paul Pagel
+This is free software; see the license.txt file for more information.
+There is no warranty; not even for merchantability or fitness for a particular purpose.
 ****************************************************/
 
 #include "esp32_badge.h"
@@ -35,7 +39,6 @@
 #define GAME_WD        GAME_RIGHT - GAME_LEFT
 #define MAX_SPEED      20  // for morg or tumbleweed movement, higher value makes game easier
 
-
 enum tile_type {
   TILE_UNKNOWN,
   TILE_EMPTY,
@@ -64,16 +67,21 @@ enum direction_type {
   DIR_RIGHT
 };
 
-enum game_state_type game_state;
-static int      difficulty, day, population, schooners;
-static uint8_t  player_row, player_col, player_dir;
-static uint8_t  shot_row, shot_col;
-static int      shot_row_chg, shot_col_chg;
-static bool     shot_active, shot_is_new;
-static uint8_t  game_grid[GAME_ROWS * GAME_COLS];
-static uint16_t spawn_counter, spawn_signal, spawn_max;
-static int      spawn_row, spawn_col;
-static uint8_t  morg_speed, tumbleweed_speed;
+enum     game_state_type game_state;
+int      difficulty, day, population, schooners;
+uint8_t  player_row, player_col, player_dir;
+uint8_t  shot_row, shot_col;
+int      shot_row_chg, shot_col_chg;
+bool     shot_active, shot_is_new;
+uint8_t  game_grid[GAME_ROWS * GAME_COLS];
+uint16_t spawn_counter, spawn_signal, spawn_max;
+int      spawn_row, spawn_col;
+uint8_t  morg_speed, tumbleweed_speed;
+
+bool     btnA_pressed, btnB_pressed, btnX_pressed, btnY_pressed;
+bool     btnUp_pressed, btnDown_pressed, btnLeft_pressed, btnRight_pressed;
+
+uint8_t spkr_channel = 1;
 
 Adafruit_ILI9341 tft = Adafruit_ILI9341(TFT_CS, TFT_DC, TFT_MOSI, TFT_CLK, TFT_RST, TFT_MISO);
 
@@ -96,7 +104,7 @@ void    setTileType(int row, int col, uint8_t tile, bool draw);
  */
 void setup() 
 {
-  Serial.begin(9600);
+  Serial.begin(115200);
   Serial.println("ESP32 Badge - Tombstone City"); 
   delay(100);
 

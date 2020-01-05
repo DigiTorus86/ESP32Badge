@@ -1,11 +1,13 @@
-#include <SPI.h>
+#ifndef _ESP32_BADGE_
+#define _ESP32_BADGE_
+
 #include <Adafruit_GFX.h>
 #include <Adafruit_ILI9341.h>
 
 // GPIO pin assignments for the ILI9341 TFT display
 #define TFT_DC     4  // Data/Command pin
 #define TFT_CS    15  // Chip Select pin
-#define TFT_RST    2  // Reset pin
+#define TFT_RST    2  // Reset pin, also builit-in blue LED
 #define TFT_MISO  19  // Master In Slave Out       
 #define TFT_MOSI  23  // Master Out Slave In         
 #define TFT_CLK   18  // SPI Clock
@@ -28,11 +30,11 @@
 #define LED_2     12  // yellow
 #define LED_3     13  // green
 
-// ESP32 DevKit I2C Pins (broken out on left of display)
+// ESP32 DevKit I2C Pins
 // SDA = 21
 // SCL = 22
 
-// Serial 2 pins (broken out on right of display)
+// Serial 2 pins
 // RX2 = 16
 // TX2 = 17
 
@@ -41,6 +43,9 @@
 #define BATT_WARN 630
 #define BATT_DIRE 610
 
-#define SCREEN_ROT 3 // 1 = horizontal, w/SD pins on the left, 3 = horizontal, w/SD pins on the right
+#define SCREEN_ROT 3   // 1 = horizontal, w/SD pins on the left, 3 = horizontal, w/SD pins on the right
 #define SCREEN_WD  320
 #define SCREEN_HT  240
+
+
+#endif // _ESP32_BADGE_

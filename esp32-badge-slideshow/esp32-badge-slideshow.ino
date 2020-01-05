@@ -1,16 +1,20 @@
 /***************************************************
-ESP32 Badge Image Slideshow App
+ESP32 Badge Image Slideshow App 
 
-by Paul Pagel, based on examples from the SDFat and Adafruit_ImageReader libraries
+Based on examples from the SDFat and Adafruit_ImageReader libraries
 
-Requires:
+Requires: 
  - ESP32 Badge v1.2 with 38-pin ESP32-DevKitC 
  - Formatted SD card containing bitmap files in the root directory.
- - Bitmaps should be 320x240 pixels, 24-bit color with 8.3 format filenames (i.e. "PICTURE1.BMP")
-
- Controls:
+ - Bitmaps should be 320x240 pixels, 24-bit color with 8.3 format filenames (i.e. "PICTURE1.BMP") 
+ 
+  Controls:
   - B button:  immediately move to next slide
- ****************************************************/
+
+Copyright (c) 2019 Paul Pagel
+This is free software; see the license.txt file for more information.
+There is no warranty; not even for merchantability or fitness for a particular purpose.
+****************************************************/
 
 #include <SdFat.h> // Adafruit fork
 #include <Adafruit_ImageReader.h> 
@@ -38,7 +42,6 @@ void setup()
   delay(100);
 
   // Set up user input pins
-  // Pins 24, 35, 36, & 39 on ESP32 do NOT have internal pullups, so need 4k7 physical resistors for these
   pinMode(BTN_UP, INPUT_PULLUP);
   pinMode(BTN_DOWN, INPUT_PULLUP);   
   pinMode(BTN_LEFT, INPUT_PULLUP);

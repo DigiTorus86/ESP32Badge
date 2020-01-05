@@ -1,11 +1,15 @@
 /***************************************************
 ESP32 Badge - Gravitack game
-An homage to the Atari arcade console
+An homage to the classic arcade console
 by Paul Pagel
 
 Requires:
  - ESP32 Badge
- ****************************************************/
+
+ Copyright (c) 2019 Paul Pagel
+This is free software; see the license.txt file for more information.
+There is no warranty; not even for merchantability or fitness for a particular purpose.
+*****************************************************/
 
 #include "esp32_badge.h"
 #include "XT_DAC_Audio.h";
@@ -55,7 +59,12 @@ const double PId15 = PI / 1.5;
 const double PIx15 = PI * 1.5;
 const double PIx075 = PI * 0.75;
 
-static bool   btnB_pressed_prev;
+static bool btnA_pressed, btnB_pressed, btnX_pressed, btnY_pressed;
+static bool btnB_pressed_prev;
+static bool btnUp_pressed, btnDown_pressed, btnLeft_pressed, btnRight_pressed;
+static bool spkr_on, led1_on, led2_on, led3_on;
+
+uint8_t spkr_channel = 1;
 
 static int    player_start_x, player_start_y;
 static double player_ctr_x = SCREEN_WD / 2;
@@ -121,7 +130,7 @@ Adafruit_ILI9341 tft = Adafruit_ILI9341(TFT_CS, TFT_DC, TFT_MOSI, TFT_CLK, TFT_R
  */
 void setup() 
 {
-  Serial.begin(9600);
+  Serial.begin(115200);
   Serial.println("ESP32 Badge - Gravitack"); 
   delay(100);
 
@@ -1270,15 +1279,20 @@ void loop()
   switch(game_state)
   {
     case STATE_TITLE:
-      handleTitle(); break;
+      handleTitle(); 
+      break;
     case STATE_RULES:
-      handleRules();break;
+      handleRules();
+      break;
     case STATE_PLAYING:
-      handlePlaying();break;
+      handlePlaying();
+      break;
     case STATE_PAUSED:
-      handlePaused(); break;
+      handlePaused(); 
+      break;
     case STATE_GAME_OVER:
-      handleGameOver(); break;
+      handleGameOver(); 
+      break;
     
   }
 

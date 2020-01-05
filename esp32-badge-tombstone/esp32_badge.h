@@ -1,14 +1,19 @@
-#include <SPI.h>
+#ifndef _ESP32_BADGE_
+#define _ESP32_BADGE_
+
 #include <Adafruit_GFX.h>
 #include <Adafruit_ILI9341.h>
 
-#define TFT_DC     4
-#define TFT_CS    15
-#define TFT_RST    2
-#define TFT_MISO  19         
-#define TFT_MOSI  23           
-#define TFT_CLK   18 
+// GPIO pin assignments for the ILI9341 TFT display
+#define TFT_DC     4  // Data/Command pin
+#define TFT_CS    15  // Chip Select pin
+#define TFT_RST    2  // Reset pin, also builit-in blue LED
+#define TFT_MISO  19  // Master In Slave Out       
+#define TFT_MOSI  23  // Master Out Slave In         
+#define TFT_CLK   18  // SPI Clock
+#define SD_CS      0  // SD card reader Chip Select pin
 
+// GPIO pin assignments for the badge buttons
 #define BTN_UP    36
 #define BTN_DOWN  39
 #define BTN_LEFT  34
@@ -18,7 +23,7 @@
 #define BTN_X     26 
 #define BTN_Y     27 
 
-#define SPKR      25  // DAC1
+#define SPKR      25  // Speaker pin DAC1
 #define BATT_LVL  32  // voltage divider
 
 #define LED_1     14  // red
@@ -38,14 +43,9 @@
 #define BATT_WARN 630
 #define BATT_DIRE 610
 
-#define SCREEN_ROT 1  // horizontal
-#define SCREEN_WD  ILI9341_TFTWIDTH  // 320
-#define SCREEN_HT  ILI9341_TFTHEIGHT // 240
+#define SCREEN_ROT 3   // 1 = horizontal, w/SD pins on the left, 3 = horizontal, w/SD pins on the right
+#define SCREEN_WD  320
+#define SCREEN_HT  240
 
 
-
-static bool btnA_pressed, btnB_pressed, btnX_pressed, btnY_pressed;
-static bool btnUp_pressed, btnDown_pressed, btnLeft_pressed, btnRight_pressed;
-static bool spkr_on, led1_on, led2_on, led3_on;
-
-uint8_t spkr_channel = 1;
+#endif // _ESP32_BADGE_

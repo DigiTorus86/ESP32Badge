@@ -1,19 +1,23 @@
 /***************************************************
 ESP32 Badge Time and Weather Display
-  By Paul Pagel
-  http://twobittinker.com/
 
 Requires:
  - DS3231 Real Time Clock breakout
  - BME280 Temperature, pressure, & humidity breakout
  - WiFi network and credentials
 
+ Will operate in a degraded mode if any of the requirements are not available.
+
  Controls:
  - X/Y:         Cycle through display modes
  - A:           Enter / commit set time
  - Left/Right:  Move selection field
  - Up/Down:     Increase/decrease selection value
- ****************************************************/
+
+Copyright (c) 2019 Paul Pagel
+This is free software; see the license.txt file for more information.
+There is no warranty; not even for merchantability or fitness for a particular purpose.
+*****************************************************/
 
 #include <Wire.h>
 #include <SPI.h>
@@ -30,6 +34,22 @@ Requires:
 #include "SparkFunBME280.h"
 #include "TFT_Helper.h"
 #include "icons.h"
+
+#define BADGE_WIFI_MODE  WIFI_MODE_AP // use WIFI_MODE_STA (station) for home WiFi, WIFI_MODE_AP (access point) when using mobile hotspot
+
+const char*    ssid     = ""; // TODO: add your network ID here 
+const char*    password = ""; // TODO: add your network password here 
+
+/*  To customize: 
+ *   1.  Go to https://www.weather.gov/documentation/services-web-api
+ *   2.  Enter your zipcode and click the Go button
+ *   3.  Copy the lat/long values from the resulting URL, i.e. lat=41.40137000000004&lon=-82.70880605999997
+ *       and past them into this URL:  https://api.weather.gov/points/<lat>,<lon>
+ *       example for Sandusky, OH:  https://api.weather.gov/points/41.40137000000004,-82.70880605999997
+ *   4.  Copy the value of the properties->forecast node to the forecast_api_url assignment below:      
+ */   
+const char*    forecast_api_url = "https://api.weather.gov/gridpoints/CLE/48,56/forecast ";  // TODO: change this for your city
+//const char*    forecast_api_url = "https://api.weather.gov/gridpoints/CLE/19,62/forecast?units=us";  // Perrysburg, OH
 
 #define FORECAST_REFRESH_MS       3600000  // 1 hr
 #define BME280_I2C_ADDR           0X76     // default address for BME280 is 0x77, mine was set to 0x76
@@ -59,19 +79,14 @@ Requires:
 bool getNtpTime();
 bool getForecast();
 
-const char*    ssid     = ""; // TODO: add your network ID here 
-const char*    password = ""; // TODO: add your network password here 
-const uint16_t net_connect_timeout_sec = 10;
-const char*    forecast_api_url = "https://api.weather.gov/gridpoints/CLE/19,62/forecast?units=us";  // TODO: change this for your city
 
+const uint16_t net_connect_timeout_sec = 10;
 const char*   ntp_server = "pool.ntp.org";
 // TODO: change this if you are not in the Eastern US time zone
 const long    gmt_offset_sec = -18000;      // EST GMT-5 * 3600 seconds per hour
 const int     daylight_offset_sec = -14400; // EDT GMT-4 * 3600 seconds per hour
 
 bool wifi_available, ds3231_available, bme280_available;  
-
-bool btnUp_released, btnDown_released, btnLeft_released, btnRight_released;
 
 #define DISPLAY_MODE_CNT  4
 enum display_mode_type 
@@ -101,6 +116,7 @@ int16_t prev_temp_f, prev_temp_c, prev_humid, prev_pressure, prev_forecast_temp_
 
 bool btnA_pressed, btnB_pressed, btnX_pressed, btnY_pressed;
 bool btnUp_pressed, btnDown_pressed, btnLeft_pressed, btnRight_pressed;
+bool btnUp_released, btnDown_released, btnLeft_released, btnRight_released;
 bool spkr_on, led1_on, led2_on, led3_on;
 
 uint8_t spkr_channel = 1;
@@ -110,7 +126,7 @@ Adafruit_ILI9341 tft = Adafruit_ILI9341(TFT_CS, TFT_DC, TFT_MOSI, TFT_CLK, TFT_R
 void setup() 
 {
   Serial.begin(115200);
-  Serial.println("ESP32 Badge RTC Test"); 
+  Serial.println("ESP32 Badge Time and Weather"); 
   delay(100);
 
   ledcSetup(spkr_channel, 12000, 8);  // 12 kHz max, 8 bit resolution
@@ -229,9 +245,12 @@ void readBME280()
 bool connectToWiFi(uint16_t timeout_sec)
 {
   uint16_t elapsed_sec = 0;
-  
+
   Serial.printf("Connecting to %s ", ssid);
   digitalWrite(LED_1, LOW);  // reset error indicator
+
+  WiFi.mode(BADGE_WIFI_MODE);
+  delay(500);
   WiFi.begin(ssid, password);
   
   while ((WiFi.status() != WL_CONNECTED) && (elapsed_sec < timeout_sec)) 

@@ -5,7 +5,7 @@
 // GPIO pin assignments for the ILI9341 TFT display
 #define TFT_DC     4  // Data/Command pin
 #define TFT_CS    15  // Chip Select pin
-#define TFT_RST    2  // Reset pin
+#define TFT_RST    2  // Reset pin, also the built-in blue LED on the NodeMCU 32S
 #define TFT_MISO  19  // Master In Slave Out       
 #define TFT_MOSI  23  // Master Out Slave In         
 #define TFT_CLK   18  // SPI Clock
