@@ -7,7 +7,7 @@
 
 Adafruit_ILI9341 tft = Adafruit_ILI9341(15, 4, 23, 18, 2, 19);
 
-const char* my_name  = "Paul Pagel";  // TODO: put your name here
+const char* my_name  = "";  // TODO: put your name here
 
 void setup() {
   tft.begin();

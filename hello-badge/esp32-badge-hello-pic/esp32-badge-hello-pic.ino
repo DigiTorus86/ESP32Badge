@@ -8,7 +8,7 @@
 
 Adafruit_ILI9341 tft = Adafruit_ILI9341(15, 4, 23, 18, 2, 19);
 
-const char* my_name  = "Paul Pagel";  // TODO: put your name here
+const char* my_name  = "";  // TODO: put your name here
 
 void setup() {
   tft.begin();
@@ -39,7 +39,7 @@ void setup() {
   tft.setTextColor(ILI9341_BLACK);
   tft.print(my_name);
 
-  tft.drawRGBBitmap(0, 100, (uint16_t *)mypicture, 111, 111);
+  tft.drawRGBBitmap(0, 100, (uint16_t *)mypicture, 120, 120);
 }
 
 void loop() {

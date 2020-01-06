@@ -86,11 +86,11 @@ void setup()
 
   delay(200);
 
-  //WiFi.mode(WIFI_STA);
-  //WiFi.disconnect();
+  WiFi.mode(WIFI_STA);
+  WiFi.disconnect();
   delay(200);
   int  wifi_count;
-  wifi_count = 0; //WiFi.scanNetworks();
+  wifi_count = WiFi.scanNetworks();
 
   tft.setTextSize(2);
   tft.setCursor(0, 190);
