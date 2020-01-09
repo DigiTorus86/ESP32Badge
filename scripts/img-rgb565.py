@@ -41,9 +41,9 @@ f.write("[%d] = {\r\n" % (width * height))
 for y in range(height):
 	for x in range(width):
 		r,g,b = rgb_im.getpixel((x, y))
-		r = (r << 8) & 0xF100
-		g = (g << 3) & 0x07E0
-		b = (b >> 3) & 0x001F
+                r = (r & 0xF8) << 8
+                g = (g & 0xFC) << 3
+                b = (b) >> 3
 		pixel = r + g + b
 		#print(hex(pixel))
 		f.write('0x{0:0{1}X}'.format(pixel, 6))
