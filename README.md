@@ -37,6 +37,7 @@ Example Sketches:
 
 Accessories:
 - Kickstand:  Minimalist 3D-printed kickstand for the badge to get it to stand upright on a flat surface.  Attach to the middle holes on badge (just below the buttons) with 2 small flat-headed woodscrews.
+- Case bottom designed by Gino Melone:  https://www.tinkercad.com/things/hnff6LtKR47
 
 Scripts:
 - img-rgb565.py: convert graphics files to RGB565 bitmap integer array C header files
