@@ -49,3 +49,4 @@ Additional Info:
 
 ![alt text](https://raw.githubusercontent.com/DigiTorus86/ESP32Badge/master/images/Gravitack-L4.jpg)
 ![alt text](https://raw.githubusercontent.com/DigiTorus86/ESP32Badge/master/images/Tombstone-screen.jpg)
+![alt text](https://raw.githubusercontent.com/DigiTorus86/ESP32Badge/master/images/BadgeTest-screen.jpg)
