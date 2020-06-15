@@ -46,3 +46,6 @@ Scripts:
 Additional Info:
 - The TFT display orientation is rotated 180 degrees between the v1.1 /DevKitv1 board and v1.2 DEVKITC versions.  Adjust the SCREEN_ROT value in esp32_badge.h to 1 for v1.1 or 3 for v1.2 boards.  
 - SD card slot on the TFT is not connected in v1.1
+
+![alt text](https://raw.githubusercontent.com/DigiTorus86/ESP32Badge/master/images/Gravitack-L4.jpg)
+![alt text](https://raw.githubusercontent.com/DigiTorus86/ESP32Badge/master/images/Tombstone-screen.jpg)
